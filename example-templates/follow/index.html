@@ -1,1 +1,25 @@
-Hello Follow
+{% extends "follow/_layout" %}
+
+{% block main %}
+
+    <div class="col-md-12">
+        {% if currentUser %}
+            <h1>Hello {{currentUser}} !</h1>
+        {% else %}
+            <h1>Hello, Guest !</h1>
+        {% endif %}
+
+        <p>Welcome in the Follow plugin example application. These template will show you how to use Follow features on your Craft website.</p>
+
+        <hr>
+
+        <h4>This demo assumes that you have...</h4>
+
+        <ul>
+            <li>Installed Follow plugin</li>
+            <li>Have some entries, assets and users content so we can start liking these elements</li>
+
+        </ul>
+    </div>
+
+{% endblock main %}

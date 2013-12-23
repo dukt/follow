@@ -6,8 +6,8 @@
  * @package   Craft Follow
  * @author    Benjamin David
  * @copyright Copyright (c) 2013, Dukt
- * @license   http://dukt.net/craft/follow/docs#license
  * @link      http://dukt.net/craft/follow/
+ * @license   http://dukt.net/craft/follow/docs/license
  */
 
 namespace Craft;
