@@ -36,14 +36,18 @@
         <div class="collapse navbar-collapse navbar-ex1-collapse">
 
             <ul class="nav navbar-nav">
+                {#
                 <li><a href="{{ url('follow/entries') }}">Entries</a></li>
                 <li><a href="{{ url('follow/assets') }}">Assets</a></li>
+                #}
+
                 <li><a href="{{ url('follow/users') }}">Users</a></li>
+                <li><a href="{{ url('follow/following') }}">Following</a></li>
+                <li><a href="{{ url('follow/followers') }}">Followers</a></li>
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
 
-                <li><a href="{{ url('follow/follows') }}">Your Follows</a></li>
 
                 {% if currentUser is null %}
                     <li><a href="{{ url('follow/login') }}">Login</a></li>

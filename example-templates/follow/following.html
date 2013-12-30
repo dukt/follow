@@ -1,0 +1,38 @@
+{% extends "follow/_layout" %}
+
+
+
+{% block main %}
+
+    <div class="col-md-12">
+        <h1>Following</h1>
+
+        <p>This page lists the users that you are following.</p>
+
+        <hr>
+
+        {% if not currentUser %}
+            <p>You need to <a href="{{url('follow/login')}}">log in</a> in order to see the users you follow.</p>
+        {% else %}
+            {% set users = craft.follow.getUserFollows('User') %}
+
+            <p><strong>Number of followings : </strong> {{users|length}}</p>
+
+            {% if users %}
+                <ul>
+                    {% for user in users %}
+
+                        <li>{{user.email}}</li>
+
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>You haven't followd any user yet.</p>
+            {% endif %}
+
+        {% endif %}
+
+
+    </div>
+
+{% endblock main %}
