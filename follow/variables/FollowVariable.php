@@ -19,9 +19,9 @@ class FollowVariable
         return craft()->follow->isFollow($elementId);
     }
 
-    public function getFollows($elementType = null)
+    public function getFollowers($elementType = null)
     {
-    	return craft()->follow->getFollows($elementType);
+    	return craft()->follow->getFollowers($elementType);
     }
 
     public function getUserFollows($elementType = null, $userId = null)

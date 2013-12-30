@@ -14,6 +14,11 @@ namespace Craft;
 
 class FollowPlugin extends BasePlugin
 {
+    public function enableNotifications()
+    {
+        return true;
+    }
+
     /**
      * Get Name
      */
@@ -44,5 +49,13 @@ class FollowPlugin extends BasePlugin
     function getDeveloperUrl()
     {
         return 'http://dukt.net/';
+    }
+
+    /**
+     * Has CP Section
+     */
+    public function hasCpSection()
+    {
+        return false;
     }
 }

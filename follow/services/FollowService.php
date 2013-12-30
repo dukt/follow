@@ -14,8 +14,10 @@ namespace Craft;
 
 class FollowService extends BaseApplicationComponent
 {
-    public function add($elementId, $userId)
+    public function startFollowing($elementId)
     {
+        $userId = craft()->userSession->getUser()->id;
+
         $conditions = 'elementId=:elementId and userId=:userId';
 
         $params = array(
@@ -34,13 +36,21 @@ class FollowService extends BaseApplicationComponent
             $record->userId = $userId;
             $record->save();
 
+            $element = craft()->elements->getElementById($elementId);
+
+            $this->onStartFollowing(new Event($this, array(
+                'element' => $element
+            )));
+
         } else {
             // already a fav
         }
     }
 
-    public function remove($elementId, $userId)
+    public function actionStopFollowing($elementId)
     {
+        $userId = craft()->userSession->getUser()->id;
+
         $conditions = 'elementId=:elementId and userId=:userId';
 
         $params = array(
@@ -51,15 +61,20 @@ class FollowService extends BaseApplicationComponent
         $record = FollowRecord::model()->find($conditions, $params);
 
         if ($record) {
+
             $record->delete();
+
+            $element = craft()->elements->getElementById($elementId);
+
+            $this->onStopFollowing(new Event($this, array(
+                'element' => $element
+            )));
         }
     }
 
-
-
-    public function getFollows($elementId = null)
+    public function getFollowers($elementId = null)
     {
-        $follows = array();
+        $followers = array();
 
 
         // find follows
@@ -71,10 +86,15 @@ class FollowService extends BaseApplicationComponent
         $records = FollowRecord::model()->findAll($conditions, $params);
 
         foreach($records as $record) {
-            array_push($follows, $record);
+
+            $user = craft()->elements->getElementById($record->userId);
+
+            if($user) {
+                array_push($followers, $user);
+            }
         }
 
-        return $follows;
+        return $followers;
     }
 
     public function getUserFollows($elementType = null, $userId = null)
@@ -136,5 +156,15 @@ class FollowService extends BaseApplicationComponent
         }
 
         return false;
+    }
+
+    public function onStartFollowing(Event $event)
+    {
+        $this->raiseEvent('onStartFollowing', $event);
+    }
+
+    public function onStopFollowing(Event $event)
+    {
+        $this->raiseEvent('onStopFollowing', $event);
     }
 }
