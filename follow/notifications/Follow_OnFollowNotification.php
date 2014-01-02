@@ -5,33 +5,30 @@ namespace Craft;
 class Follow_OnFollowNotification extends BaseNotification
 {
     /**
-     * Label of userSettings checkbox
+     * Event
      */
-    public function getLabel()
+    public function event()
     {
-        return "Notify me when someone starts following me";
+        return 'follow.startFollowing';
     }
 
 
     /**
-     * Send Notification
+     * Action
      */
-    public function send()
+    public function action(Event $event)
     {
-        craft()->on('follow.startFollowing', function(Event $event) {
+        $user = craft()->userSession->getUser();
 
-            $user = craft()->userSession->getUser();
+        $notify = craft()->notifications->userHasNotification($user, $this->getHandle());
 
-            $notify = craft()->notifications->userHasNotification($user, $this->getHandle());
-
-            $to = $event->params['element']; // assumes 'element' is an 'User'
+        $to = $event->params['element']; // assumes 'element' is an 'User'
 
 
-            // send
+        // send
 
-            $variables['user'] = $user;
+        $variables['user'] = $user;
 
-            craft()->notifications->sendNotification($this->getHandle(), $to, $variables);
-        });
+        craft()->notifications->sendNotification($this->getHandle(), $to, $variables);
     }
 }

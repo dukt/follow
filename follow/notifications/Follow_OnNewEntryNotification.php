@@ -5,50 +5,47 @@ namespace Craft;
 class Follow_OnNewEntryNotification extends BaseNotification
 {
     /**
-     * Label of userSettings checkbox
+     * Event
      */
-    public function getLabel()
+    public function event()
     {
-        return "Notify me when someone I follow posts new entries";
+        return 'entries.onSaveEntry';
     }
 
 
     /**
-     * Send Notification
+     * Action
      */
-    public function send()
+    public function action(Event $event)
     {
-        craft()->on('entries.onSaveEntry', function(Event $event) {
+        if(!$event->params['isNewEntry']) {
+            return;
+        }
 
-            if(!$event->params['isNewEntry']) {
-                return;
-            }
+        $author = craft()->userSession->getUser();
 
-            $author = craft()->userSession->getUser();
+        // retrieve followers
 
-            // retrieve followers
+        $followers = craft()->follow->getFollowers($author->id);
 
-            $followers = craft()->follow->getFollowers($author->id);
-
-            craft()->notifications->filterUsersByNotification($followers, $this->getHandle());
+        craft()->notifications->filterUsersByNotification($followers, $this->getHandle());
 
 
-            // get the entry
+        // get the entry
 
-            $entry = craft()->entries->getEntryById($event->params['entry']->id);
-
-
-            // send email to followers
-
-            foreach($followers as $follower) {
-
-                $variables['author'] = $author;
-                $variables['follower'] = $follower;
-                $variables['entry'] = $entry;
+        $entry = craft()->entries->getEntryById($event->params['entry']->id);
 
 
-                craft()->notifications->sendNotification($this->getHandle(), $follower, $variables);
-            }
-        });
+        // send email to followers
+
+        foreach($followers as $follower) {
+
+            $variables['author'] = $author;
+            $variables['follower'] = $follower;
+            $variables['entry'] = $entry;
+
+
+            craft()->notifications->sendNotification($this->getHandle(), $follower, $variables);
+        }
     }
 }
