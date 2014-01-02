@@ -12,10 +12,11 @@ class Follow_OnFollowNotification extends BaseNotification
         return "Notify me when someone starts following me";
     }
 
+
     /**
-     * Notification Action
+     * Send Notification
      */
-    public function getAction()
+    public function send()
     {
         craft()->on('follow.startFollowing', function(Event $event) {
 
@@ -23,24 +24,14 @@ class Follow_OnFollowNotification extends BaseNotification
 
             $notify = craft()->notifications->userHasNotification($user, $this->getHandle());
 
-            if($notify) {
-
-                $toUser = $event->params['element']; // assumes 'element' is an 'User'
+            $to = $event->params['element']; // assumes 'element' is an 'User'
 
 
-                // send email
+            // send
 
-                $emailModel = new EmailModel;
+            $variables['user'] = $user;
 
-                $emailModel->toEmail = $toUser->email;
-
-                $emailModel->subject = 'You have a new follower';
-                $emailModel->htmlBody = "A user has started following you : {{user.email}}";
-
-                $variables['user'] = $user;
-
-                craft()->email->sendEmail($emailModel, $variables);
-            }
+            craft()->notifications->sendNotification($this->getHandle(), $to, $variables);
         });
     }
 }

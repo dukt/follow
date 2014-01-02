@@ -12,10 +12,11 @@ class Follow_OnNewEntryNotification extends BaseNotification
         return "Notify me when someone I follow posts new entries";
     }
 
+
     /**
-     * Notification Action
+     * Send Notification
      */
-    public function getAction()
+    public function send()
     {
         craft()->on('entries.onSaveEntry', function(Event $event) {
 
@@ -32,26 +33,22 @@ class Follow_OnNewEntryNotification extends BaseNotification
             craft()->notifications->filterUsersByNotification($followers, $this->getHandle());
 
 
+            // get the entry
+
+            $entry = craft()->entries->getEntryById($event->params['entry']->id);
+
+
             // send email to followers
 
             foreach($followers as $follower) {
 
-                // send email
-
-                $emailModel = new EmailModel;
-
-                $emailModel->toEmail = $follower->email;
-
-                $emailModel->subject = 'Someone has posted a new entry';
-                $emailModel->htmlBody = "A user that you are following has posted a new entry : {{entry.title}}";
-
                 $variables['author'] = $author;
                 $variables['follower'] = $follower;
-                $variables['entry'] = $event->params['entry'];
+                $variables['entry'] = $entry;
 
-                craft()->email->sendEmail($emailModel, $variables);
+
+                craft()->notifications->sendNotification($this->getHandle(), $follower, $variables);
             }
-
         });
     }
 }
