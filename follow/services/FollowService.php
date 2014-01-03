@@ -16,6 +16,18 @@ class FollowService extends BaseApplicationComponent
 {
     public function startFollowing($elementId)
     {
+        $element = craft()->elements->getElementById($elementId);
+
+
+        // make sure the element we want to follow is a user
+
+        if($element->elementType != 'User') {
+            return;
+        }
+
+
+        // get session user
+
         $userId = craft()->userSession->getUser()->id;
 
         $conditions = 'elementId=:elementId and userId=:userId';
@@ -36,10 +48,9 @@ class FollowService extends BaseApplicationComponent
             $record->userId = $userId;
             $record->save();
 
-            $element = craft()->elements->getElementById($elementId);
 
             $this->onStartFollowing(new Event($this, array(
-                'element' => $element
+                'user' => $element
             )));
 
         } else {
@@ -49,6 +60,15 @@ class FollowService extends BaseApplicationComponent
 
     public function actionStopFollowing($elementId)
     {
+        $element = craft()->elements->getElementById($elementId);
+
+
+        // make sure the element we want to follow is a user
+
+        if($element->elementType != 'User') {
+            return;
+        }
+
         $userId = craft()->userSession->getUser()->id;
 
         $conditions = 'elementId=:elementId and userId=:userId';
@@ -67,7 +87,7 @@ class FollowService extends BaseApplicationComponent
             $element = craft()->elements->getElementById($elementId);
 
             $this->onStopFollowing(new Event($this, array(
-                'element' => $element
+                'user' => $element
             )));
         }
     }

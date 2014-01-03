@@ -22,7 +22,7 @@ class Follow_OnFollowNotification extends BaseNotification
 
         $notify = craft()->notifications->userHasNotification($user, $this->getHandle());
 
-        $to = $event->params['element']; // assumes 'element' is an 'User'
+        $to = $event->params['user'];
 
 
         // send
