@@ -14,7 +14,7 @@
         {% if not currentUser %}
             <p>You need to <a href="{{url('follow/login')}}">log in</a> in order to see the users you follow.</p>
         {% else %}
-            {% set users = craft.follow.getUserFollows('User') %}
+            {% set users = craft.follow.getFollowing() %}
 
             <p><strong>Number of followings : </strong> {{users|length}}</p>
 
@@ -22,7 +22,7 @@
                 <ul>
                     {% for user in users %}
 
-                        <li>{{user.email}}</li>
+                        <li>{{user.fullName}}</li>
 
                     {% endfor %}
                 </ul>
