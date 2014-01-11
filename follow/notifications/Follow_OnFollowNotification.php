@@ -18,17 +18,18 @@ class Follow_OnFollowNotification extends BaseNotification
      */
     public function action(Event $event)
     {
-        $user = craft()->userSession->getUser();
+        $contextUser = craft()->userSession->getUser();
 
-        $notify = craft()->notifications->userHasNotification($user, $this->getHandle());
+        $notify = craft()->notifications->userHasNotification($contextUser, $this->getHandle());
 
-        $to = $event->params['user'];
+        $user = $event->params['user'];
 
 
         // send
 
         $variables['user'] = $user;
+        $variables['contextUser'] = $contextUser;
 
-        craft()->notifications->sendNotification($this->getHandle(), $to, $variables);
+        craft()->notifications->sendNotification($this->getHandle(), $user, $variables);
     }
 }

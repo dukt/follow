@@ -92,16 +92,23 @@ class FollowService extends BaseApplicationComponent
         }
     }
 
-    public function getFollowers($elementId = null)
+    public function getFollowers($userId = null)
     {
         $followers = array();
 
+        if(!$userId && craft()->userSession->isLoggedIn()) {
+                $userId = craft()->userSession->getUser()->id;
+        }
+
+        if(!$userId) {
+            return $followers;
+        }
 
         // find follows
 
         $conditions = 'elementId=:elementId';
 
-        $params = array(':elementId' => $elementId);
+        $params = array(':elementId' => $userId);
 
         $records = FollowRecord::model()->findAll($conditions, $params);
 
@@ -117,16 +124,16 @@ class FollowService extends BaseApplicationComponent
         return $followers;
     }
 
-    public function getUserFollows($elementType = null, $userId = null)
+    public function getFollowing($userId = null)
     {
-        $follows = array();
+        $following = array();
 
         if(!$userId && craft()->userSession->isLoggedIn()) {
                 $userId = craft()->userSession->getUser()->id;
         }
 
         if(!$userId) {
-            return $follows;
+            return $following;
         }
 
 
@@ -142,14 +149,14 @@ class FollowService extends BaseApplicationComponent
 
         foreach($records as $record) {
 
-            $followElement = craft()->elements->getElementById($record->elementId, $elementType);
+            $followElement = craft()->elements->getElementById($record->elementId, 'User');
 
             if($followElement) {
-                array_push($follows, $followElement);
+                array_push($following, $followElement);
             }
         }
 
-        return $follows;
+        return $following;
     }
 
     public function isFollow($elementId)

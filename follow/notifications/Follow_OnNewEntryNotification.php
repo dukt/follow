@@ -22,11 +22,12 @@ class Follow_OnNewEntryNotification extends BaseNotification
             return;
         }
 
-        $author = craft()->userSession->getUser();
+        $contextUser = craft()->userSession->getUser();
+
 
         // retrieve followers
 
-        $followers = craft()->follow->getFollowers($author->id);
+        $followers = craft()->follow->getFollowers($contextUser->id);
 
         craft()->notifications->filterUsersByNotification($followers, $this->getHandle());
 
@@ -38,14 +39,14 @@ class Follow_OnNewEntryNotification extends BaseNotification
 
         // send email to followers
 
-        foreach($followers as $follower) {
+        foreach($followers as $user) {
 
-            $variables['author'] = $author;
-            $variables['follower'] = $follower;
+            $variables['user'] = $user;
+            $variables['contextUser'] = $contextUser;
             $variables['entry'] = $entry;
 
 
-            craft()->notifications->sendNotification($this->getHandle(), $follower, $variables);
+            craft()->notifications->sendNotification($this->getHandle(), $user, $variables);
         }
     }
 }
