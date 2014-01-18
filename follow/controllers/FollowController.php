@@ -18,17 +18,47 @@ class FollowController extends BaseController
     {
     	$elementId = craft()->request->getParam('id');
 
-    	craft()->follow->startFollowing($elementId);
+    	$response = craft()->follow->startFollowing($elementId);
 
-    	$this->redirect($_SERVER['HTTP_REFERER']);
+        if (craft()->request->isAjaxRequest()) {
+
+            if ($response) {
+                $this->returnJson(array(
+                    'success' => true
+                ));
+            }
+            else
+            {
+                $this->returnErrorJson(Craft::t("Couldn't start following."));
+            }
+        }
+        else
+        {
+            $this->redirect($_SERVER['HTTP_REFERER']);
+        }
     }
 
     public function actionStopFollowing(array $variables = array())
     {
     	$elementId = craft()->request->getParam('id');
 
-    	craft()->follow->actionStopFollowing($elementId);
+    	$response = craft()->follow->actionStopFollowing($elementId);
 
-    	$this->redirect($_SERVER['HTTP_REFERER']);
+        if (craft()->request->isAjaxRequest()) {
+
+            if ($response) {
+                $this->returnJson(array(
+                    'success' => true
+                ));
+            }
+            else
+            {
+                $this->returnErrorJson(Craft::t("Couldn't start following."));
+            }
+        }
+        else
+        {
+            $this->redirect($_SERVER['HTTP_REFERER']);
+        }
     }
 }

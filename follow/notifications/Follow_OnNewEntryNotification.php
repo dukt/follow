@@ -27,6 +27,10 @@ class Follow_OnNewEntryNotification extends BaseNotification
 
         // retrieve followers
 
+        if(!$contextUser) {
+            return;
+        }
+
         $followers = craft()->follow->getFollowers($contextUser->id);
 
         craft()->notifications->filterUsersByNotification($followers, $this->getHandle());
