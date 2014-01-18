@@ -5,7 +5,7 @@
  *
  * @package   Craft Follow
  * @author    Benjamin David
- * @copyright Copyright (c) 2013, Dukt
+ * @copyright Copyright (c) 2014, Dukt
  * @link      http://dukt.net/craft/follow/
  * @license   http://dukt.net/craft/follow/docs/license
  */
@@ -53,7 +53,7 @@ class FollowController extends BaseController
             }
             else
             {
-                $this->returnErrorJson(Craft::t("Couldn't start following."));
+                $this->returnErrorJson(Craft::t("Couldn't stop following."));
             }
         }
         else
