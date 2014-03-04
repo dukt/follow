@@ -47,6 +47,7 @@ class Follow_OnNewEntryNotification extends BaseNotification
 
             $variables['user'] = $user;
             $variables['contextUser'] = $contextUser;
+            $variables['contextElement'] = $entry;
             $variables['entry'] = $entry;
 
 
