@@ -22,16 +22,16 @@ class Follow_OnNewEntryNotification extends BaseNotification
             return;
         }
 
-        $contextUser = craft()->userSession->getUser();
+        $user = craft()->userSession->getUser();
 
 
         // retrieve followers
 
-        if(!$contextUser) {
+        if(!$user) {
             return;
         }
 
-        $followers = craft()->follow->getFollowers($contextUser->id);
+        $followers = craft()->follow->getFollowers($user->id);
 
         craft()->notifications->filterUsersByNotification($followers, $this->getHandle());
 
@@ -40,28 +40,33 @@ class Follow_OnNewEntryNotification extends BaseNotification
 
         $entry = craft()->entries->getEntryById($event->params['entry']->id);
 
+        // data
+        $data = array(
+            'userId' => $user->id,
+            'entryId' => $entry->id,
+        );
 
         // send email to followers
-
-        foreach($followers as $user) {
-
-            $variables['user'] = $user;
-            $variables['contextUser'] = $contextUser;
-            $variables['contextElement'] = $entry;
-            $variables['entry'] = $entry;
-
-
-            craft()->notifications->sendNotification($this->getHandle(), $user, $variables);
+        foreach($followers as $recipient)
+        {
+            craft()->notifications->sendNotification($this->getHandle(), $recipient, $data);
         }
     }
 
-    public function getOpenUrl()
+    public function getVariables($data = array())
     {
-        return "{{ entry.url }}";
-    }
+        $variables = $data;
 
-    public function getOpenCpUrl()
-    {
-        return "{{ entry.cpEditUrl }}";
+        if(!empty($data['userId']))
+        {
+            $variables['user'] = craft()->elements->getElementById($data['userId']);
+        }
+
+        if(!empty($data['entryId']))
+        {
+            $variables['entry'] = craft()->elements->getElementById($data['entryId']);
+        }
+
+        return $variables;
     }
 }
