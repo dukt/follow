@@ -54,4 +54,14 @@ class Follow_OnNewEntryNotification extends BaseNotification
             craft()->notifications->sendNotification($this->getHandle(), $user, $variables);
         }
     }
+
+    public function getOpenUrl()
+    {
+        return "{{ entry.url }}";
+    }
+
+    public function getOpenCpUrl()
+    {
+        return "{{ entry.cpEditUrl }}";
+    }
 }

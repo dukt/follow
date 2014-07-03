@@ -22,14 +22,20 @@ class Follow_OnFollowNotification extends BaseNotification
 
         $notify = craft()->notifications->userHasNotification($contextUser, $this->getHandle());
 
-        $user = $event->params['user'];
+        $recipient = $event->params['user'];
 
 
         // send
 
-        $variables['user'] = $user;
+        $variables['recipient'] = $recipient;
         $variables['contextUser'] = $contextUser;
+        $variables['user'] = $contextUser;
 
-        craft()->notifications->sendNotification($this->getHandle(), $user, $variables);
+        craft()->notifications->sendNotification($this->getHandle(), $recipient, $variables);
+    }
+
+    public function getOpenCpUrl()
+    {
+        return "{{ user.cpEditUrl }}";
     }
 }
