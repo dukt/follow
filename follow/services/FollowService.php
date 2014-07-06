@@ -39,8 +39,8 @@ class FollowService extends BaseApplicationComponent
 
         $record = FollowRecord::model()->find($conditions, $params);
 
-        if (!$record) {
-
+        if (!$record)
+        {
             // add fav
 
             $record = new FollowRecord;
@@ -48,12 +48,14 @@ class FollowService extends BaseApplicationComponent
             $record->userId = $userId;
             $record->save();
 
+            $model = FollowModel::populateModel($record);
 
             $this->onStartFollowing(new Event($this, array(
-                'user' => $element
+                'follow' => $model
             )));
-
-        } else {
+        }
+        else
+        {
             // already a fav
         }
     }
@@ -80,15 +82,25 @@ class FollowService extends BaseApplicationComponent
 
         $record = FollowRecord::model()->find($conditions, $params);
 
-        if ($record) {
+        if ($record)
+        {
+            $model = FollowModel::populateModel($record);
 
             $record->delete();
 
-            $element = craft()->elements->getElementById($elementId);
-
             $this->onStopFollowing(new Event($this, array(
-                'user' => $element
+                'follow' => $model
             )));
+        }
+    }
+
+    public function getFollowById($id)
+    {
+        $record = FollowRecord::model()->findByPk($id);
+
+        if($record)
+        {
+            return FollowModel::populateModel($record);
         }
     }
 
@@ -104,6 +116,26 @@ class FollowService extends BaseApplicationComponent
             return $followers;
         }
 
+        $follows = $this->getFollowsByElementId($userId);
+
+        foreach($follows as $follow)
+        {
+            $follower = craft()->users->getUserById($follow->userId);
+
+            if($follower)
+            {
+                array_push($followers, $follower);
+            }
+        }
+
+        return $followers;
+    }
+
+    public function getFollowsByElementId($userId)
+    {
+
+        $follows = array();
+
         // find follows
 
         $conditions = 'elementId=:elementId';
@@ -112,16 +144,7 @@ class FollowService extends BaseApplicationComponent
 
         $records = FollowRecord::model()->findAll($conditions, $params);
 
-        foreach($records as $record) {
-
-            $user = craft()->elements->getElementById($record->userId);
-
-            if($user) {
-                array_push($followers, $user);
-            }
-        }
-
-        return $followers;
+        return FollowModel::populateModels($records);
     }
 
     public function getFollowing($userId = null)

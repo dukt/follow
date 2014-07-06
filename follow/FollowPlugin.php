@@ -14,11 +14,6 @@ namespace Craft;
 
 class FollowPlugin extends BasePlugin
 {
-    public function enableNotifications()
-    {
-        return true;
-    }
-
     /**
      * Get Name
      */
@@ -57,5 +52,34 @@ class FollowPlugin extends BasePlugin
     public function hasCpSection()
     {
         return false;
+    }
+
+    /**
+     * Enable notifications
+     */
+    public function enableNotifications()
+    {
+        return true;
+    }
+
+    /**
+     * Init: Listen to events
+     */
+    public function init()
+    {
+        craft()->on('entries.onDeleteEntry', function(Event $event) {
+            // delete notifications with entryId
+            craft()->notifications->deleteNotifications('entryId', $event->params['entry']->id);
+        });
+
+        craft()->on('users.onDeleteUser', function(Event $event) {
+            // delete notifications with senderId
+            craft()->notifications->deleteNotifications('senderId', $event->params['user']->id);
+        });
+
+        craft()->on('follow.onStopFollowing', function(Event $event) {
+            // delete notifications with likeId
+            craft()->notifications->deleteNotifications('followId', $event->params['follow']->id);
+        });
     }
 }

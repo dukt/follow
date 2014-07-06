@@ -12,35 +12,58 @@ class Follow_OnFollowNotification extends BaseNotification
         return 'follow.startFollowing';
     }
 
-
     /**
      * Action
      */
     public function action(Event $event)
     {
-        $user = craft()->userSession->getUser();
+        // data
+        $data = $this->getDataFromEvent($event);
+
+        // variables
+        $variables = $this->getVariables($data);
 
         // recipient
-        $recipient = $event->params['user'];
-
-        // data
-        $data = array(
-            'userId' => $user->id
-        );
+        $recipient = $event->params['follow']->getElement();
 
         // send notification
         craft()->notifications->sendNotification($this->getHandle(), $recipient, $data);
     }
 
+    /**
+     * Get variables
+     */
     public function getVariables($data = array())
     {
-        $variables = $data;
-
-        if(!empty($data['userId']))
+        if(!empty($data['followId']))
         {
-            $variables['user'] = craft()->elements->getElementById($data['userId']);
-        }
+            $follow = craft()->follow->getFollowById($data['followId']);
+            $sender = $follow->getUser();
 
-        return $variables;
+            return array(
+                'sender' => $sender,
+                'follow' => $follow
+            );
+        }
+    }
+
+    /**
+     * Get data from event
+     */
+    public function getDataFromEvent(Event $event)
+    {
+        $follow = $event->params['follow'];
+        $sender = $follow->getUser();
+
+        return array(
+            'followId' => $follow->id,
+            'senderId' => $sender->id
+        );
+    }
+
+
+    public function defaultOpenCpUrlFormat()
+    {
+        return '{{sender.cpEditUrl}}';
     }
 }
