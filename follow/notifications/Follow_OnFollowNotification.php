@@ -26,8 +26,11 @@ class Follow_OnFollowNotification extends BaseNotification
         // recipient
         $recipient = $event->params['follow']->getElement();
 
+        $sender = $variables['sender'];
+        $relatedElement = $variables['follow'];
+
         // send notification
-        craft()->notifications->sendNotification($this->getHandle(), $recipient, $data);
+        craft()->notifications->sendNotification($this->getHandle(), $recipient, $sender, $relatedElement, $data);
     }
 
     /**

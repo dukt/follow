@@ -14,13 +14,13 @@ namespace Craft;
 
 class FollowService extends BaseApplicationComponent
 {
-    public function startFollowing($elementId)
+    public function startFollowing($followElementId)
     {
-        $element = craft()->elements->getElementById($elementId);
+        $validateContent = false;
 
+        $element = craft()->elements->getElementById($followElementId);
 
         // make sure the element we want to follow is a user
-
         if($element->elementType != 'User') {
             return;
         }
@@ -30,10 +30,10 @@ class FollowService extends BaseApplicationComponent
 
         $userId = craft()->userSession->getUser()->id;
 
-        $conditions = 'elementId=:elementId and userId=:userId';
+        $conditions = 'followElementId=:followElementId and userId=:userId';
 
         $params = array(
-            ':elementId' => $elementId,
+            ':followElementId' => $followElementId,
             ':userId' => $userId
         );
 
@@ -41,28 +41,44 @@ class FollowService extends BaseApplicationComponent
 
         if (!$record)
         {
+            $model = new FollowModel;
+            $model->followElementId = $followElementId;
+            $model->userId = $userId;
+
             // add fav
-
             $record = new FollowRecord;
-            $record->elementId = $elementId;
+            $record->followElementId = $followElementId;
             $record->userId = $userId;
-            $record->save();
 
-            $model = FollowModel::populateModel($record);
+            $record->validate();
+            $model->addErrors($record->getErrors());
 
-            $this->onStartFollowing(new Event($this, array(
-                'follow' => $model
-            )));
+            if(!$model->hasErrors())
+            {
+                if(craft()->elements->saveElement($model, $validateContent))
+                {
+                    $record->id = $model->id;
+                    $record->save(false);
+
+                    $this->onStartFollowing(new Event($this, array(
+                        'follow' => $model
+                    )));
+
+                    return true;
+                }
+            }
         }
         else
         {
             // already a fav
         }
+
+        return true;
     }
 
-    public function actionStopFollowing($elementId)
+    public function actionStopFollowing($followElementId)
     {
-        $element = craft()->elements->getElementById($elementId);
+        $element = craft()->elements->getElementById($followElementId);
 
 
         // make sure the element we want to follow is a user
@@ -73,10 +89,10 @@ class FollowService extends BaseApplicationComponent
 
         $userId = craft()->userSession->getUser()->id;
 
-        $conditions = 'elementId=:elementId and userId=:userId';
+        $conditions = 'followElementId=:followElementId and userId=:userId';
 
         $params = array(
-            ':elementId' => $elementId,
+            ':followElementId' => $followElementId,
             ':userId' => $userId
         );
 
@@ -86,7 +102,7 @@ class FollowService extends BaseApplicationComponent
         {
             $model = FollowModel::populateModel($record);
 
-            $record->delete();
+            craft()->elements->deleteElementById($record->id);
 
             $this->onStopFollowing(new Event($this, array(
                 'follow' => $model
@@ -138,9 +154,9 @@ class FollowService extends BaseApplicationComponent
 
         // find follows
 
-        $conditions = 'elementId=:elementId';
+        $conditions = 'followElementId=:followElementId';
 
-        $params = array(':elementId' => $userId);
+        $params = array(':followElementId' => $userId);
 
         $records = FollowRecord::model()->findAll($conditions, $params);
 
@@ -172,7 +188,7 @@ class FollowService extends BaseApplicationComponent
 
         foreach($records as $record) {
 
-            $followElement = craft()->elements->getElementById($record->elementId, 'User');
+            $followElement = craft()->elements->getElementById($record->followElementId, 'User');
 
             if($followElement) {
                 array_push($following, $followElement);
@@ -182,7 +198,7 @@ class FollowService extends BaseApplicationComponent
         return $following;
     }
 
-    public function isFollow($elementId)
+    public function isFollow($followElementId)
     {
         if(craft()->userSession->isLoggedIn()) {
             $userId = craft()->userSession->getUser()->id;
@@ -192,10 +208,10 @@ class FollowService extends BaseApplicationComponent
 
         $userId = craft()->userSession->getUser()->id;
 
-        $conditions = 'elementId=:elementId and userId=:userId';
+        $conditions = 'followElementId=:followElementId and userId=:userId';
 
         $params = array(
-            ':elementId' => $elementId,
+            ':followElementId' => $followElementId,
             ':userId' => $userId
         );
 

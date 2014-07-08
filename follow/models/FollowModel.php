@@ -12,18 +12,20 @@
 
 namespace Craft;
 
-class FollowModel extends BaseModel
+class FollowModel extends BaseElementModel
 {
+    protected $elementType = 'Follow_Follow';
+
     /**
      * Define Attributes
      */
     public function defineAttributes()
     {
-        return array(
+        return array_merge(parent::defineAttributes(), array(
             'id' => AttributeType::Number,
-            'elementId' => AttributeType::Number,
+            'followElementId' => AttributeType::Number,
             'userId' => AttributeType::Number,
-        );
+        ));
     }
 
     public function getUser()
@@ -35,9 +37,9 @@ class FollowModel extends BaseModel
 
     public function getElement()
     {
-        if($this->elementId)
+        if($this->followElementId)
         {
-            return craft()->elements->getElementById($this->elementId);
+            return craft()->elements->getElementById($this->followElementId);
         }
     }
 }

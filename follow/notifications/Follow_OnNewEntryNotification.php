@@ -23,7 +23,6 @@ class Follow_OnNewEntryNotification extends BaseNotification
             $variables = $this->getVariables($data);
 
             $followers = craft()->follow->getFollowers($variables['sender']->id);
-            // var_dump($variables['sender']->id, $followers);
 
             craft()->notifications->filterUsersByNotification($followers, $this->getHandle());
 
@@ -32,15 +31,20 @@ class Follow_OnNewEntryNotification extends BaseNotification
             // send email to followers
             foreach($followers as $recipient)
             {
+                //$relatedElement2 = null;
+
                 foreach($follows as $follow)
                 {
                     if($follow->userId == $recipient->id)
                     {
+                        // $relatedElement2 = $follow;
                         $data['followId'] = $follow->id;
                     }
                 }
 
-                craft()->notifications->sendNotification($this->getHandle(), $recipient, $data);
+                $relatedElement = $variables['entry'];
+
+                craft()->notifications->sendNotification($this->getHandle(), $recipient, $sender, $relatedElement, $data);
             }
         }
     }
@@ -55,10 +59,15 @@ class Follow_OnNewEntryNotification extends BaseNotification
             $entry = craft()->entries->getEntryById($data['entryId']);
             $sender = $entry->author;
 
-            return array(
+            $return = array(
                 'sender' => $sender,
                 'entry' => $entry,
             );
+
+            if(!empty($data['followId']))
+            {
+                $follow = craft()->follow->getFollowById($data['followId']);
+            }
         }
     }
 
