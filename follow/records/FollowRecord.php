@@ -36,16 +36,15 @@ class FollowRecord extends BaseRecord
     public function defineIndexes()
     {
         return array(
-            array('columns' => array('userId', 'followElementId'), 'unique' => true),
+            array('columns' => array('userId', 'elementId'), 'unique' => true),
         );
     }
 
     public function defineRelations()
     {
         return array(
-            'element'   => array(static::BELONGS_TO, 'ElementRecord', 'id', 'required' => true, 'onDelete' => static::CASCADE),
             'user' => array(static::BELONGS_TO, 'UserRecord', 'userId', 'required' => true),
-            'followElement' => array(static::BELONGS_TO, 'ElementRecord', 'followElementId', 'required' => true)
+            'element' => array(static::BELONGS_TO, 'ElementRecord', 'elementId', 'required' => true)
         );
     }
 }
