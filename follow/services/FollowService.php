@@ -100,12 +100,39 @@ class FollowService extends BaseApplicationComponent
 
         if ($record)
         {
-            $model = FollowModel::populateModel($record);
+            $this->deleteFollowById($record->id);
+        }
+    }
 
-            craft()->elements->deleteElementById($record->id);
+    public function deleteFollowById($id)
+    {
+        $follow = $this->getFollowById($id);
+
+        if($follow)
+        {
+            if(isset(craft()->notifications))
+            {
+                // remove notifications related to this follow
+
+                $notifications = array();
+
+                $notifications = array_merge($notifications, craft()->notifications->findNotificationsByData('follow.onfollow', 'followId', $follow->id));
+
+                // alternate solution: retrieve all entries en followed user
+                // foreach entry remove notification of follower user
+
+                $notifications = array_merge($notifications, craft()->notifications->findNotificationsByData('follow.onnewentry', 'followId', $follow->id));
+
+                foreach($notifications as $notification)
+                {
+                    craft()->notifications->deleteNotificationById($notification->id);
+                }
+            }
+
+            craft()->elements->deleteElementById($follow->id);
 
             $this->onStopFollowing(new Event($this, array(
-                'follow' => $model
+                'follow' => $follow
             )));
         }
     }
@@ -147,16 +174,26 @@ class FollowService extends BaseApplicationComponent
         return $followers;
     }
 
-    public function getFollowsByElementId($userId)
+    public function getFollowsByUserId($userId)
     {
+        // find follows
 
-        $follows = array();
+        $conditions = 'userId=:userId';
 
+        $params = array(':userId' => $userId);
+
+        $records = FollowRecord::model()->findAll($conditions, $params);
+
+        return FollowModel::populateModels($records);
+    }
+
+    public function getFollowsByElementId($elementId)
+    {
         // find follows
 
         $conditions = 'followElementId=:followElementId';
 
-        $params = array(':followElementId' => $userId);
+        $params = array(':followElementId' => $elementId);
 
         $records = FollowRecord::model()->findAll($conditions, $params);
 

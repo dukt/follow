@@ -15,6 +15,49 @@ namespace Craft;
 class FollowPlugin extends BasePlugin
 {
     /**
+     * Init: Listen to events
+     */
+    public function init()
+    {
+        craft()->on('users.onBeforeDeleteUser', function(Event $event) {
+
+            $user = $event->params['user'];
+
+
+            // delete user followers
+
+            $follows = craft()->follow->getFollowsByElementId($user->id);
+
+            foreach($follows as $follow)
+            {
+                craft()->follow->deleteFollowById($follow->id);
+            }
+
+
+            // delete user followings
+
+            $follows = craft()->follow->getFollowsByUserId($user->id);
+
+            foreach($follows as $follow)
+            {
+                craft()->follow->deleteFollowById($follow->id);
+            }
+        });
+
+        craft()->on('entries.onBeforeDeleteEntry', function(Event $event) {
+
+            $entry = $event->params['entry'];
+
+            $notifications = craft()->notifications->findNotificationsByData('follow.onnewentry', 'entryId', $entry->id);
+
+            foreach($notifications as $notification)
+            {
+                craft()->notifications->deleteNotificationById($notification->id);
+            }
+        });
+    }
+
+    /**
      * Get Name
      */
     function getName()
@@ -43,7 +86,7 @@ class FollowPlugin extends BasePlugin
      */
     function getDeveloperUrl()
     {
-        return 'http://dukt.net/';
+        return 'https://dukt.net/';
     }
 
     /**
@@ -60,26 +103,5 @@ class FollowPlugin extends BasePlugin
     public function enableNotifications()
     {
         return true;
-    }
-
-    /**
-     * Init: Listen to events
-     */
-    public function init()
-    {
-        craft()->on('entries.onDeleteEntry', function(Event $event) {
-            // delete notifications with entryId
-            craft()->notifications->deleteNotifications('entryId', $event->params['entry']->id);
-        });
-
-        craft()->on('users.onDeleteUser', function(Event $event) {
-            // delete notifications with senderId
-            craft()->notifications->deleteNotifications('senderId', $event->params['user']->id);
-        });
-
-        craft()->on('follow.onStopFollowing', function(Event $event) {
-            // delete notifications with likeId
-            craft()->notifications->deleteNotifications('followId', $event->params['follow']->id);
-        });
     }
 }

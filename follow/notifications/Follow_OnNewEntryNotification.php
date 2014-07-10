@@ -19,32 +19,26 @@ class Follow_OnNewEntryNotification extends BaseNotification
     {
         if($event->params['isNewEntry'])
         {
-            $data = $this->getDataFromEvent($event);
-            $variables = $this->getVariables($data);
+            $entry = $event->params['entry'];
+            $sender = $entry->getAuthor();
 
-            $followers = craft()->follow->getFollowers($variables['sender']->id);
+            // data
+            $data = array(
+                'entryId' => $entry->id
+            );
 
-            craft()->notifications->filterUsersByNotification($followers, $this->getHandle());
 
-            $follows = craft()->follow->getFollowsByUserId($variables['sender']->id);
+            // get sender's followers
 
-            // send email to followers
-            foreach($followers as $recipient)
+            $follows = craft()->follow->getFollowsByElementId($sender->id);
+
+            foreach($follows as $follow)
             {
-                //$relatedElement2 = null;
+                $recipient = $follow->getUser();
 
-                foreach($follows as $follow)
-                {
-                    if($follow->userId == $recipient->id)
-                    {
-                        // $relatedElement2 = $follow;
-                        $data['followId'] = $follow->id;
-                    }
-                }
+                $data['followId'] = $follow->id;
 
-                $relatedElement = $variables['entry'];
-
-                craft()->notifications->sendNotification($this->getHandle(), $recipient, $sender, $relatedElement, $data);
+                craft()->notifications->sendNotification($this->getHandle(), $recipient, $sender, $data);
             }
         }
     }
@@ -57,36 +51,28 @@ class Follow_OnNewEntryNotification extends BaseNotification
         if(!empty($data['entryId']))
         {
             $entry = craft()->entries->getEntryById($data['entryId']);
-            $sender = $entry->author;
+            $follow = craft()->follow->getFollowById($data['followId']);
 
-            $return = array(
-                'sender' => $sender,
+            $variables = array(
                 'entry' => $entry,
+                'follow' => $follow,
             );
 
-            if(!empty($data['followId']))
-            {
-                $follow = craft()->follow->getFollowById($data['followId']);
-            }
+            return $variables;
         }
     }
 
     /**
-     * Get data from event
+     * Default Open Url Format
      */
-    public function getDataFromEvent(Event $event)
-    {
-        return array(
-            'entryId' => $event->params['entry']->id,
-            'senderId' => $event->params['entry']->authorId
-        );
-    }
-
     public function defaultOpenUrlFormat()
     {
         return '{{entry.url}}';
     }
 
+    /**
+     * Default Open CP Url Format
+     */
     public function defaultOpenCpUrlFormat()
     {
         return '{{entry.cpEditUrl}}';
