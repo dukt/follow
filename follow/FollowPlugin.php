@@ -44,17 +44,20 @@ class FollowPlugin extends BasePlugin
             }
         });
 
-        craft()->on('entries.onBeforeDeleteEntry', function(Event $event) {
+        if(isset(craft()->notifications))
+        {
+            craft()->on('entries.onBeforeDeleteEntry', function(Event $event) {
 
-            $entry = $event->params['entry'];
+                $entry = $event->params['entry'];
 
-            $notifications = craft()->notifications->findNotificationsByData('follow.onnewentry', 'entryId', $entry->id);
+                $notifications = craft()->notifications->findNotificationsByData('follow.onnewentry', 'entryId', $entry->id);
 
-            foreach($notifications as $notification)
-            {
-                craft()->notifications->deleteNotificationById($notification->id);
-            }
-        });
+                foreach($notifications as $notification)
+                {
+                    craft()->notifications->deleteNotificationById($notification->id);
+                }
+            });
+        }
     }
 
     /**
