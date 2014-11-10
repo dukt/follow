@@ -105,25 +105,6 @@ class FollowService extends BaseApplicationComponent
         {
             $follow = FollowModel::populateModel($record);
 
-            // remove notifications related to this follow
-
-            if(isset(craft()->notifications))
-            {
-                $notifications = array();
-
-                $notifications = array_merge($notifications, craft()->notifications->findNotificationsByData('follow.onfollow', 'followId', $follow->id));
-
-                // alternate solution: retrieve all entries en followed user
-                // foreach entry remove notification of follower user
-
-                $notifications = array_merge($notifications, craft()->notifications->findNotificationsByData('follow.onnewentry', 'followId', $follow->id));
-
-                foreach($notifications as $notification)
-                {
-                    craft()->notifications->deleteNotificationById($notification->id);
-                }
-            }
-
             // delete record
             $record->delete();
 
