@@ -16,7 +16,7 @@
         {% else %}
             {% set users = craft.follow.getFollowing() %}
 
-            {% if users %}
+            {% if users|length > 0 %}
 
                 <p>You are following {{users|length}} users.</p>
 
@@ -29,7 +29,7 @@
                 </div>
 
             {% else %}
-                <p>{{ "You are not following anyone yet."|t }}</p>
+                <p>{{ "You are not following anyone."|t }}</p>
             {% endif %}
 
         {% endif %}

@@ -28,7 +28,7 @@
                             <p>{{ "{count} follower"|t({ count: followersCount }) }}</p>
                         {% endif %}
 
-                        {% if currentUser.id != user.id %}
+                        {% if currentUser and currentUser.id != user.id %}
                             {% if craft.follow.isFollow(user.id) %}
                                 <a class="btn btn-default btn-sm" href="{{actionUrl('follow/stopFollowing', {id:user.id})}}">{{ "Unfollow"|t }}</a>
                             {% else %}

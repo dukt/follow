@@ -7,21 +7,28 @@
 
         <p class="lead">{{ "All Craft users." }}</p>
 
+        <hr>
+
         {% if not currentUser %}
             <p>You need to <a href="{{url('follow/login')}}">login</a> in order to start following users.</p>
         {% endif %}
 
         {% set users = craft.users.find() %}
 
-        <hr>
+        {% if users|length > 0 %}
 
-        <div class="row">
-            {% for user in users %}
-                <div class="col-sm-6 col-md-4">
-                    {% include 'follow/_user' with { user: user } %}
-                </div>
-            {% endfor %}
-        </div>
+            <div class="row">
+                {% for user in users %}
+                    <div class="col-sm-6 col-md-4">
+                        {% include 'follow/_user' with { user: user } %}
+                    </div>
+                {% endfor %}
+            </div>
+
+        {% else %}
+            <p>{{ "You are not following anyone yet."|t }}</p>
+        {% endif %}
+
     </div>
 
 {% endblock main %}

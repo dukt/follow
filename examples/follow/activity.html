@@ -12,7 +12,7 @@
         <hr />
 
         {% if not currentUser %}
-            <p>{{ 'You need to <a href="{url}">login</a> in order to see you followers.'|t({ url: url('follow/login') })|raw }}</p>
+            <p>{{ 'You need to <a href="{url}">login</a> in order to see the activity of users you follow.'|t({ url: url('follow/login') })|raw }}</p>
         {% else %}
             {% set followingUsers = craft.follow.getFollowing( user.id ) %}
 
