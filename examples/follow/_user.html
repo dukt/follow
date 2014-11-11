@@ -1,0 +1,47 @@
+{% set followers = craft.follow.getFollowers(user.id) %}
+
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="panel panel-default">
+            <div class="panel-body">
+
+                <div class="row">
+                    <div class="col-sm-4">
+                        {% if user.photoUrl %}
+                            {% set photoUrl = user.photoUrl %}
+                        {% else %}
+                            {% set photoUrl = resourceUrl('images/user.gif') %}
+                        {% endif %}
+
+                        <img src="{{ photoUrl }}" width="90" class="img-circle" />
+                    </div>
+                    <div class="col-sm-8">
+
+                        <h5>{{ user.fullName }}</h5>
+
+                        {% set followersCount = followers|length %}
+
+                        {% if followersCount > 1 %}
+                            <p>{{ "{count} followers"|t({ count: followersCount }) }}</p>
+                        {% else %}
+                            <p>{{ "{count} follower"|t({ count: followersCount }) }}</p>
+                        {% endif %}
+
+                        {% if currentUser.id != user.id %}
+                            {% if craft.follow.isFollow(user.id) %}
+                                <a class="btn btn-default btn-sm" href="{{actionUrl('follow/stopFollowing', {id:user.id})}}">{{ "Unfollow"|t }}</a>
+                            {% else %}
+                                <a class="btn btn-default btn-sm btn-primary" href="{{actionUrl('follow/startFollowing', {id:user.id})}}">{{ "Follow"|t }}</a>
+                            {% endif %}
+                        {% else %}
+                            <div class="btn btn-default btn-sm btn-primary disabled">{{ "Follow"|t }}</div>
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

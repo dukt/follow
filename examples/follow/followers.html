@@ -1,0 +1,38 @@
+{% extends "follow/_layout" %}
+
+
+
+{% block main %}
+
+    <div class="col-md-12">
+        <h1>{{ "Followers"|t }}</h1>
+
+        <p class="lead">{{ "Users that are following you."|t }}</p>
+
+        <hr />
+
+        {% if not currentUser %}
+            <p>{{ 'You need to <a href="{url}">login</a> in order to see you followers.'|t({ url: url('follow/login') })|raw }}</p>
+        {% else %}
+            {% set users = craft.follow.getFollowers(currentUser.id) %}
+
+            {% if users %}
+
+                <p>{{ "You have {count} followers."|t({ count: users|length }) }}</p>
+
+                <div class="row">
+                    {% for user in users %}
+                        <div class="col-md-4">
+                            {% include 'follow/_user' with { user: user } %}
+                        </div>
+                    {% endfor %}
+                </div>
+
+            {% else %}
+                <p>{{ "No one is following you yet." }}</p>
+            {% endif %}
+        {% endif %}
+
+    </div>
+
+{% endblock main %}

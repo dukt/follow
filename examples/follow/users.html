@@ -1,0 +1,27 @@
+{% extends "follow/_layout" %}
+
+{% block main %}
+
+    <div class="col-md-12">
+        <h1>Users</h1>
+
+        <p class="lead">{{ "All Craft users." }}</p>
+
+        {% if not currentUser %}
+            <p>You need to <a href="{{url('follow/login')}}">login</a> in order to start following users.</p>
+        {% endif %}
+
+        {% set users = craft.users.find() %}
+
+        <hr>
+
+        <div class="row">
+            {% for user in users %}
+                <div class="col-sm-6 col-md-4">
+                    {% include 'follow/_user' with { user: user } %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock main %}
