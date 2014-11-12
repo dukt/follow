@@ -3,6 +3,7 @@
 {% block main %}
 
     <div class="col-md-6 col-md-offset-3">
+
         <h1>Login</h1>
 
         <hr>
@@ -22,15 +23,9 @@
                 <input name="password" type="password" class="form-control" id="password">
             </div>
 
-            <div class="checkbox">
-                <label>
-                    <input type="checkbox" name="rememberMe" value="1">
-                    Remember me
-                </label>
-            </div>
-
-            <p><input type="submit" class="btn btn-primary" value="Login"> &nbsp; <a href="{{ url('login/forgotpassword') }}" class="btn btn-default btn-sm">Forget your password?</a></p>
+            <p><input type="submit" class="btn btn-primary" value="Login"></p>
         </form>
+
     </div>
 
 {% endblock main %}
