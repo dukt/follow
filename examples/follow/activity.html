@@ -31,14 +31,14 @@
                             <div class="media-left text-center">
 
                                 {% if entry.author.photoUrl %}
-                                    {% set photoUrl = entry.author.photoUrl %}
+                                    {% set photoUrl = entry.author.photoUrl(80) %}
                                 {% else %}
                                     {% set photoUrl = resourceUrl('images/user.gif') %}
                                 {% endif %}
 
-                                <img src="{{ photoUrl }}" width="80" class="img-circle img-responsive" />
+                                <img src="{{ photoUrl }}" width="80" class="img-circle" />
 
-                                {{ entry.author.fullName }}
+                                <p>{{ entry.author.fullName }}</p>
 
                             </div>
 
