@@ -8,4 +8,4 @@ Allow your users to follow each other.
 - [Follow License](https://dukt.net/craft/follow/docs/license)
 
 
-[Dukt.net](https://dukt.net/) © 2014 - All rights reserved
+[Dukt.net](https://dukt.net/) © 2015 - All rights reserved
