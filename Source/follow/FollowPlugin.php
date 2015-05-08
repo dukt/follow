@@ -12,6 +12,8 @@
 
 namespace Craft;
 
+require_once(CRAFT_PLUGINS_PATH.'follow/Info.php');
+
 class FollowPlugin extends BasePlugin
 {
     /**
@@ -58,7 +60,7 @@ class FollowPlugin extends BasePlugin
      */
     function getVersion()
     {
-        return '0.9.7';
+        return FOLLOW_VERSION;
     }
 
     /**
