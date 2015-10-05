@@ -15,6 +15,61 @@ A simple plugin to connect to Follow's API.
 ## Templating
 
 
+### Following
+
+Users that you are following.
+
+    {% if not currentUser %}
+        <p>You need to <a href="{{url('follow/login')}}">login</a> in order to see the users you follow.</p>
+    {% else %}
+        {% set users = craft.follow.getFollowing() %}
+
+        {% if users|length > 0 %}
+
+            <p>You are following {{users|length}} users.</p>
+
+            <div class="row">
+                {% for user in users %}
+                    <div class="col-md-4">
+                        {% include 'follow/_user' with { user: user } %}
+                    </div>
+                {% endfor %}
+            </div>
+
+        {% else %}
+            <p>{{ "You are not following anyone."|t }}</p>
+        {% endif %}
+
+    {% endif %}
+
+
+### Followers
+
+Users that are following you.
+
+    {% if not currentUser %}
+        <p>{{ 'You need to <a href="{url}">login</a> in order to see you followers.'|t({ url: url('follow/login') })|raw }}</p>
+    {% else %}
+        {% set users = craft.follow.getFollowers(currentUser.id) %}
+
+        {% if users %}
+
+            <p>{{ "You have {count} followers."|t({ count: users|length }) }}</p>
+
+            <div class="row">
+                {% for user in users %}
+                    <div class="col-md-4">
+                        {% include 'follow/_user' with { user: user } %}
+                    </div>
+                {% endfor %}
+            </div>
+
+        {% else %}
+            <p>{{ "No one is following you." }}</p>
+        {% endif %}
+    {% endif %}
+
+
 ### Activity
 
 Recent entries from users you are following.
@@ -74,61 +129,6 @@ Recent entries from users you are following.
             <p>{{ "Start following some users to see their recent entries."|t }}</p>
         {% endif %}
 
-    {% endif %}
-
-
-### Following
-
-Users that you are following.
-
-    {% if not currentUser %}
-        <p>You need to <a href="{{url('follow/login')}}">login</a> in order to see the users you follow.</p>
-    {% else %}
-        {% set users = craft.follow.getFollowing() %}
-
-        {% if users|length > 0 %}
-
-            <p>You are following {{users|length}} users.</p>
-
-            <div class="row">
-                {% for user in users %}
-                    <div class="col-md-4">
-                        {% include 'follow/_user' with { user: user } %}
-                    </div>
-                {% endfor %}
-            </div>
-
-        {% else %}
-            <p>{{ "You are not following anyone."|t }}</p>
-        {% endif %}
-
-    {% endif %}
-
-
-### Followers
-
-Users that are following you.
-
-    {% if not currentUser %}
-        <p>{{ 'You need to <a href="{url}">login</a> in order to see you followers.'|t({ url: url('follow/login') })|raw }}</p>
-    {% else %}
-        {% set users = craft.follow.getFollowers(currentUser.id) %}
-
-        {% if users %}
-
-            <p>{{ "You have {count} followers."|t({ count: users|length }) }}</p>
-
-            <div class="row">
-                {% for user in users %}
-                    <div class="col-md-4">
-                        {% include 'follow/_user' with { user: user } %}
-                    </div>
-                {% endfor %}
-            </div>
-
-        {% else %}
-            <p>{{ "No one is following you." }}</p>
-        {% endif %}
     {% endif %}
 
 ### user.html
