@@ -1,0 +1,9 @@
+<p class="light">
+
+    {% if totalFollowers %}
+        {{ "{totalFollowers} followers"|t({ totalFollowers: totalFollowers }) }}
+    {% else %}
+        {{ "No followers"|t }}
+    {% endif %}
+
+</p>
