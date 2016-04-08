@@ -1,13 +1,8 @@
 <?php
-
 /**
- * Craft Follow by Dukt
- *
- * @package   Craft Follow
- * @author    Benjamin David
- * @copyright Copyright (c) 2015, Dukt
- * @link      http://dukt.net/craft/follow/
- * @license   http://dukt.net/craft/follow/docs/license
+ * @link      https://dukt.net/craft/follow/
+ * @copyright Copyright (c) 2016, Dukt
+ * @license   https://dukt.net/craft/follow/docs/license
  */
 
 namespace Craft;
