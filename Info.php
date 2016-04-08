@@ -2,4 +2,4 @@
 
 namespace Craft;
 
-define('FOLLOW_VERSION', '0.9.7');
+define('FOLLOW_VERSION', '0.9.8');
