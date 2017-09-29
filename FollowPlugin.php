@@ -79,4 +79,12 @@ class FollowPlugin extends BasePlugin
     {
         return false;
     }
+
+    /**
+     * Get release feed URL
+     */
+    public function getReleaseFeedUrl()
+    {
+        return 'https://raw.githubusercontent.com/dukt/follow/v1/releases.json';
+    }
 }
