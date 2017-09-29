@@ -43,7 +43,7 @@ class FollowPlugin extends BasePlugin
     /**
      * Get Name
      */
-    function getName()
+    public function getName()
     {
         return Craft::t('Follow');
     }
@@ -51,7 +51,7 @@ class FollowPlugin extends BasePlugin
     /**
      * Get Version
      */
-    function getVersion()
+    public function getVersion()
     {
         return '1.0.0';
     }
@@ -59,7 +59,7 @@ class FollowPlugin extends BasePlugin
     /**
      * Get Developer
      */
-    function getDeveloper()
+    public function getDeveloper()
     {
         return 'Dukt';
     }
@@ -67,7 +67,7 @@ class FollowPlugin extends BasePlugin
     /**
      * Get Developer URL
      */
-    function getDeveloperUrl()
+    public function getDeveloperUrl()
     {
         return 'https://dukt.net/';
     }
